@@ -5,100 +5,80 @@ ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 
 void setup() {
   size(400, 400);
-  randomSeed(1);
+  int buffer = 0;
+  PVector a = new PVector(buffer, buffer);
+  PVector b = new PVector(width-buffer, buffer);
+  PVector c = new PVector(width-buffer, height-buffer);
+  PVector d = new PVector(buffer, height-buffer);
+  points.add(a);
+  points.add(b);
+  points.add(c);
+  points.add(d);
+  triangles.add(new Triangle(a, b, c));
+  triangles.add(new Triangle(a, c, d));
+  newPoint(500, 500);
+
+  debug = false;
 }
 
-void initTriangles() {
-  PVector a = points.get(0);
-  PVector b = points.get(1);
-  PVector c = points.get(2);
-  Triangle t = new Triangle(a, b, c);
-  triangles.add(t);
-}
-
-Object getRandom(ArrayList list) {
-  int i = int(random(list.size()));
-  return list.get(i);
-}
-
-void keyPressed() {
-  if (key == ' ') {
-    swap();
-  }
-  delaunay(null);
-
-  redraw();
-}
-
-void swap() {
-  Triangle t1 = (Triangle) getRandom(triangles);
-  Triangle t2 = (Triangle) getRandom(triangles);
-
-  PVector tempA = t1.a;
-  PVector tempB = t2.b;
-  t2.a = tempA;
-  t1.c = tempB;
-  t1.update();
-  t2.update();
-  
-}
+boolean debug = false;
 
 void delaunay(PVector v) {
-
-  if (v != null) {
-    Triangle t = (Triangle) getRandom(triangles);
-    PVector a = t.a;
-    PVector b = t.b;
-    Triangle newT = new Triangle(a, b, v);
-    triangles.add(newT);
-  }
-
-
-  boolean finished = false;
-  while (!finished) {
-    finished = true;
-    for (Triangle tri : triangles) {
-      Circle c = tri.circum;
-      int total = 0;
-      for (PVector p : points) {
-        if (c.contains(p)) {
-          total++;
-        }
+  // A list of triangles whose circumcircle contains the new point
+  ArrayList<Triangle> toConsider = new ArrayList<Triangle>();
+  for (int i = triangles.size()-1; i >= 0; i--) {
+    Triangle t = triangles.get(i);
+    if (t.circleContains(v)) {
+      toConsider.add(t);
+      if (debug) {
+        t.highlight = true;
+      } else {
+        triangles.remove(i);
       }
-      println(c, total);
-      if (total >= 4) {
-        //finished = false;
+    }
+  } 
+
+  if (!debug) {
+    ArrayList<Edge> uniqueEdges = new ArrayList<Edge>();
+    if (toConsider.size() == 1) {
+      Edge[] edges = toConsider.get(0).edges;
+      for (int i = 0; i  < edges.length; i++) {
+        uniqueEdges.add(edges[i]);
+      }
+    } else {
+      // Let's make list of edges for a new polygon
+      for (int i = 0; i < toConsider.size(); i++) {
+        Triangle ti = toConsider.get(i);
+        for (int j = 0; j < toConsider.size(); j++) {
+          Triangle tj = toConsider.get(j);
+          if (i != j) {
+            // What edges from i are unique to i only?
+            for (int k = 0; k  < ti.edges.length; k++) {
+              if (!ti.edges[k].alsoIn(tj)) {
+                uniqueEdges.add(ti.edges[k]);
+              }
+            }
+          }
+        }
       }
     }
 
-    //if (!finished) {
+    Poly poly = new Poly();
+    for (Edge e : uniqueEdges) {
+      poly.addVertex(e.a);
+      poly.addVertex(e.b);
+    }
+    poly.sortVertices();
 
-    //  // Do a swap
-
-    //}
-    redraw();
+    for (int i = 0; i < poly.vertices.size(); i++) {
+      PVector a = poly.vertices.get(i);
+      PVector b = poly.vertices.get((i+1) % poly.vertices.size());
+      PVector c = v;        
+      Triangle t = new Triangle(a, b, c);
+      triangles.add(t);
+    }
   }
-
-
-
-  //ArrayList<PVector> tempP = new ArrayList<PVector>();
-  //for (PVector v : points) {
-  //  tempP.add(v);
-  //}
-
-  //while (tempP.size() >= 3) {
-  //  PVector a = tempP.remove(int(random(tempP.size())));
-  //  PVector b = tempP.remove(int(random(tempP.size())));
-  //  PVector c = tempP.remove(int(random(tempP.size())));
-  //  tempP.add(b);
-  //  tempP.add(c);
-  //  Triangle t = new Triangle(a, b, c);
-  //  triangles.add(t);
-
-  //  if (triangles.size() > 1) {
-  //    swapUntilDone();
-  //  }
-  //}
+  redraw();
 }
 
 void draw() {
@@ -106,6 +86,15 @@ void draw() {
 
   for (Triangle t : triangles) {
     t.display();
+
+    if (debug) {
+      PVector m = new PVector(mouseX, mouseY);
+      if (t.circleContains(m)) {
+        t.showCircle();
+      }
+    }
+
+    //t.showCircle();
   }
 
   for (PVector v : points) {
@@ -113,18 +102,17 @@ void draw() {
     stroke(0);
     ellipse(v.x, v.y, 8, 8);
   }
-
-  noLoop();
+  //noLoop();
 }
 
-void mousePressed() {
-  PVector spot = new PVector(mouseX, mouseY);
-  points.add(spot);
 
-  if (points.size() == 3) {
-    initTriangles();
-  } else if (points.size() >= 3) {
-    delaunay(spot);
-  }
+void newPoint(float x, float y) {
+  PVector spot = new PVector(x, y);
+  points.add(spot);
+  delaunay(spot);
   redraw();
+}
+
+void mousePressed( ) {
+  newPoint(mouseX, mouseY);
 }

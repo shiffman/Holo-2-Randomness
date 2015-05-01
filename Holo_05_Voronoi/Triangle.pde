@@ -3,12 +3,21 @@ class Triangle {
   PVector b;
   PVector c;
 
+  boolean highlight = false;
+
+  Edge[] edges = new Edge[3];
+
   Circle circum;
 
   Triangle(PVector a, PVector b, PVector c) {
     this.a = a;
     this.b = b;
     this.c = c;
+
+    edges[0] = new Edge(this.a, this.b);
+    edges[1] = new Edge(this.b, this.c);
+    edges[2] = new Edge(this.a, this.c);
+
     circum = circumCenter();
   }
 
@@ -16,15 +25,34 @@ class Triangle {
     circum = circumCenter();
   }
 
+  boolean circleContains(PVector v) {
+    return circum.contains(v);
+  }
+
+
   void display() {
-    stroke(0);
-    noFill();
+    if (highlight) {
+      display(255,0,0);
+    } else {
+      display(0, 0, 0);
+    }
+  }
+
+  void display(float rr, float gg, float bb) {
+    stroke(rr, gg, bb);
+    if (rr != 0 || gg != 0 || bb != 0) {
+      fill(rr, gg, bb, 100);
+    } else {
+      noFill();
+    }
     beginShape();
     vertex(a.x, a.y);
     vertex(b.x, b.y);
     vertex(c.x, c.y);
     endShape(CLOSE);
+  }
 
+  void showCircle() {
     circum.display();
   }
 
