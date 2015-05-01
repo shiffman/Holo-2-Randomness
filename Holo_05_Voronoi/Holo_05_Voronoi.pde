@@ -1,4 +1,5 @@
- //<>//
+// Processing triangulation //<>//
+// Built based on http://paulbourke.net/papers/triangulate/
 
 ArrayList<PVector> points = new ArrayList<PVector>();
 ArrayList<Triangle> triangles = new ArrayList<Triangle>();
@@ -16,8 +17,6 @@ void setup() {
   points.add(d);
   triangles.add(new Triangle(a, b, c));
   triangles.add(new Triangle(a, c, d));
-  newPoint(500, 500);
-
   debug = false;
 }
 
@@ -97,11 +96,11 @@ void draw() {
     //t.showCircle();
   }
 
-  for (PVector v : points) {
-    fill(182);
-    stroke(0);
-    ellipse(v.x, v.y, 8, 8);
-  }
+  //for (PVector v : points) {
+  //  fill(182);
+  //  stroke(0);
+  //  ellipse(v.x, v.y, 8, 8);
+  //}
   //noLoop();
 }
 
