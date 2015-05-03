@@ -21,7 +21,8 @@ class Edge {
   }
   
   void display() {
-    stroke(0,0,255);
+    stroke(255,150);
+    strokeWeight(1);
     line(a.x,a.y,b.x,b.y);
   }
   

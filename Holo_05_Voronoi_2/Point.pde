@@ -10,7 +10,9 @@ class Point extends PVector implements Comparable<Point> {
   }
 
   void display() {
-    ellipse(x, y, 4, 4);
+    stroke(255);
+    strokeWeight(4);
+    point(x,y);
   }
 
   int compareTo(Point other) {

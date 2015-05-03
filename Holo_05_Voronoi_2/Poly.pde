@@ -13,8 +13,6 @@ class Poly {
   PVector centroid;
   boolean polyDebug = false;
 
-  float br = random(255);
-
   Poly() {
     // Empty at first
     vertices = new ArrayList<Point>();
@@ -98,7 +96,7 @@ class Poly {
 
     // First draw the polygon
     stroke(255);
-    fill(br, 127);
+    noFill();
     beginShape();
     for (PVector v : vertices) {
       vertex(v.x, v.y);

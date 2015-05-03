@@ -16,9 +16,9 @@ PVector test;
 int counter = 3;
 
 void setup() {
-  size(600, 600);
+  size(600, 600, JAVA2D_2X);
   randomSeed(2);
-  for (int i = 0; i < 50; i++) {
+  for (int i = 0; i < 150; i++) {
     newPoint(random(width), random(height));
   }
   Collections.sort(points);
@@ -56,6 +56,7 @@ void draw() {
   if (counter < points.size()-1) {
     counter++;
   } else {
+    hull.display();
     noLoop();
   }
 }
