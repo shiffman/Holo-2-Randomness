@@ -16,9 +16,9 @@ PVector test;
 int counter = 3;
 
 void setup() {
-  size(600, 600, JAVA2D_2X);
+  size(600, 400, JAVA2D_2X);
   randomSeed(2);
-  for (int i = 0; i < 150; i++) {
+  for (int i = 0; i < 64; i++) {
     newPoint(random(width), random(height));
   }
   Collections.sort(points);
