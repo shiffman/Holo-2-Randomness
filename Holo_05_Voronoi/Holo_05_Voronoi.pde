@@ -4,9 +4,12 @@
 ArrayList<PVector> points = new ArrayList<PVector>();
 ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 
+boolean showVoronoi = false;
+boolean showDelaunay = true;
+  int buffer = 10;
+
 void setup() {
-  size(400, 400);
-  int buffer = 0;
+  size(600, 600);
   PVector a = new PVector(buffer, buffer);
   PVector b = new PVector(width-buffer, buffer);
   PVector c = new PVector(width-buffer, height-buffer);
@@ -83,25 +86,62 @@ void delaunay(PVector v) {
 void draw() {
   background(100);
 
-  for (Triangle t : triangles) {
-    t.display();
+  if (showDelaunay) {
+    for (Triangle t : triangles) {
+      t.display();
 
-    if (debug) {
-      PVector m = new PVector(mouseX, mouseY);
-      if (t.circleContains(m)) {
-        t.showCircle();
+      if (debug) {
+        PVector m = new PVector(mouseX, mouseY);
+        if (t.circleContains(m)) {
+          t.showCircle();
+        }
       }
-    }
 
-    //t.showCircle();
+      //t.showCircle();
+    }
   }
 
+
+  calcVoronoi();
+  if (showVoronoi) {
+    for (Poly p : voronoi) {
+      p.display();
+    }
+  }
+
+
+  if (frameCount % 30 == 0) {
+    newPoint(random(10,width-buffer), random(buffer,height-buffer));    
+  }
+  
   //for (PVector v : points) {
   //  fill(182);
   //  stroke(0);
   //  ellipse(v.x, v.y, 8, 8);
   //}
-  //noLoop();
+  // noLoop();
+}
+
+ArrayList<Poly> voronoi = new ArrayList<Poly>();
+
+void calcVoronoi() {
+  voronoi.clear();
+  for (Triangle t : triangles) {
+    Poly region = new Poly();
+    ArrayList<Triangle> neighbors = new ArrayList<Triangle>();
+    for (Triangle other : triangles) {
+      if (t != other && t.isNeighbor(other)) {
+        neighbors.add(other);
+      }
+    }
+    region.addVertex(t.circum.center);
+    for (Triangle nb : neighbors) {
+      region.addVertex(nb.circum.center);
+    }
+    region.sortVertices();
+
+    voronoi.add(region);
+  }
 }
 
 
@@ -109,6 +149,16 @@ void newPoint(float x, float y) {
   PVector spot = new PVector(x, y);
   points.add(spot);
   delaunay(spot);
+  redraw();
+}
+
+void keyPressed() {
+  if (key == 'd') {
+    showDelaunay = !showDelaunay;
+  } else if (key == 'v') {
+    showVoronoi = !showVoronoi;
+    println(voronoi.size());
+  }
   redraw();
 }
 

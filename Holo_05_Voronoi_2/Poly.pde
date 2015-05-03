@@ -8,7 +8,7 @@
 
 class Poly {
   // A list of vertices
-  ArrayList<PVector> vertices;
+  ArrayList<Point> vertices;
   // The center
   PVector centroid;
   boolean polyDebug = false;
@@ -17,8 +17,8 @@ class Poly {
 
   Poly() {
     // Empty at first
-    vertices = new ArrayList<PVector>();
-    centroid = new PVector();
+    vertices = new ArrayList<Point>();
+    centroid = new Point();
   }
 
   // We can clear the whole thing if necessary
@@ -28,7 +28,7 @@ class Poly {
 
 
   // Add a new vertex
-  void addVertex(PVector newVertex) {
+  void addVertex(Point newVertex) {
 
     if (vertices.contains(newVertex)) {
       return;
@@ -60,21 +60,21 @@ class Poly {
     // This is something like a selection sort
     // Here, instead of sorting within the ArrayList
     // We'll just build a new one sorted
-    ArrayList<PVector> newVertices = new ArrayList<PVector>();
+    ArrayList<Point> newVertices = new ArrayList<Point>();
 
     // As long as it's not empty
     while (!vertices.isEmpty ()) {
       // Let's find the one with the highest angle
       float biggestAngle = 0;
-      PVector biggestVertex = null;
+      Point biggestVertex = null;
       // Look through all of them
-      for (PVector v : vertices) {
+      for (Point v : vertices) {
         // Make a vector that points from center
         PVector dir = PVector.sub(v, centroid);
         // What is it's heading
         // The heading function will give us values between -PI and PI
         // easier to sort if we have from 0 to TWO_PI
-        float a = dir.heading2D() + PI;
+        float a = dir.heading() + PI;
         // Did we find it
         if (a > biggestAngle) {
           biggestAngle = a;

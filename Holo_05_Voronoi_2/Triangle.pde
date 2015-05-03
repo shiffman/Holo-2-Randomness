@@ -1,7 +1,7 @@
 class Triangle {
-  PVector a;
-  PVector b;
-  PVector c;
+  Point a;
+  Point b;
+  Point c;
 
   boolean highlight = false;
 
@@ -11,7 +11,7 @@ class Triangle {
   
   float br = random(255);
 
-  Triangle(PVector a, PVector b, PVector c) {
+  Triangle(Point a, Point b, Point c) {
     this.a = a;
     this.b = b;
     this.c = c;
