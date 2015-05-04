@@ -1,4 +1,4 @@
-// Processing triangulation //<>//
+// Processing triangulation //<>// //<>//
 // Reference: https://www.youtube.com/watch?v=7VcuKj1_nHA
 // http://geomalgorithms.com/a15-_tangents.html
 // http://www.personal.kent.edu/~rmuhamma/Compgeometry/MyCG/ConvexHull/incrementCH.htm
@@ -10,31 +10,38 @@ ArrayList<Edge> edges = new ArrayList<Edge>();
 
 boolean showVoronoi = false;
 boolean showDelaunay = true;
-boolean debug = false;
+boolean debug = true;
 Poly hull = null;
 PVector test;
 int counter = 3;
 
 void setup() {
-  size(600, 400, JAVA2D_2X);
-  randomSeed(2);
-  for (int i = 0; i < 64; i++) {
+  size(1200, 800, P2D_2X);
+  //randomSeed(20);
+  //frameRate(5);
+  newPoint(0, 0);
+  newPoint(width-1, 0);
+  newPoint(0, height-1);
+  newPoint(width-1, height-1);
+
+  for (int i = 0; i < 256; i++) {
     newPoint(random(width), random(height));
   }
-  Collections.sort(points);
+  initTriangulation();
 }
-
-
 
 void newPoint(float x, float y) {
   points.add(new Point(x, y));
 }
+
+
 
 void draw() {
   background(100);
   Point current = points.get(counter);
   triangulate(current);
 
+  int count = 0;
   for (Point p : points) {
     p.display();
   }
@@ -42,16 +49,21 @@ void draw() {
   for (Edge e : edges) {
     e.display();
   }
+  hull.display();
 
   if (debug) {
     if (hull != null) {
       hull.polyDebug = true;
-      hull.display();
     }
     if (test != null) {
-      drawVector(test, width/2, height/2, 1);
+      fill(255, 0, 0);
+      ellipse(test.x, test.y, 8, 8);
+      //drawVector(test, width/2, height/2, 1);
     }
   }
+
+  fill(255, 0, 0);
+  ellipse(current.x, current.y, 10, 10);
 
   if (counter < points.size()-1) {
     counter++;

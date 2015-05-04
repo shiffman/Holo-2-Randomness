@@ -8,7 +8,7 @@ class Triangle {
   Edge[] edges = new Edge[3];
 
   Circle circum;
-  
+
   float br = random(255);
 
   Triangle(Point a, Point b, Point c) {
@@ -22,7 +22,7 @@ class Triangle {
 
     circum = circumCenter();
   }
-  
+
   boolean isNeighbor(Triangle t) {
     boolean neighbor = false;
     for (Edge e1 : edges) {
@@ -31,7 +31,7 @@ class Triangle {
         break;
       }
     }
-    return neighbor;    
+    return neighbor;
   }
 
   void update() {
@@ -45,7 +45,7 @@ class Triangle {
 
   void display() {
     if (highlight) {
-      display(255,0,0);
+      display(255, 0, 0);
     } else {
       display(br, br, br);
     }
@@ -106,5 +106,17 @@ class Triangle {
     float r = PVector.dist(center, a);
 
     return new Circle(center, r);
+  }
+
+  // From: http://stackoverflow.com/questions/2049582/how-to-determine-a-point-in-a-triangle
+  boolean contains(Point p) {
+    Point p0 = a;
+    Point p1 = b;
+    Point p2 = c;
+    float A = 0.5 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
+    float sign = A < 0 ? -1 : 1;
+    float s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
+    float t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+    return s > 0 && t > 0 && (s + t) < 2 * A * sign;
   }
 }

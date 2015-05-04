@@ -24,6 +24,55 @@ class Poly {
     vertices.clear();
   }
 
+  void deleteVertex(int index) {
+    vertices.remove(index);
+  }
+
+  void insertVertex(int index, Point p) {
+    vertices.add(index, p);
+  }
+
+  void deleteEnd() {
+    deleteVertex(vertices.size()-1);
+  }
+
+  void reorder(int start) {
+    reorder(start, false);
+  }
+
+  void reorder(int start, boolean reverse) {
+    int total = vertices.size();
+    ArrayList<Point> temp = new ArrayList<Point>();
+    int index = start;
+    while (true) {
+
+      temp.add(vertices.get(index));
+      if (reverse) {
+        index = (index - 1 + total) % total;
+      } else {
+        index = (index + 1) % total;
+      }
+      
+      if (index == start) {
+        break;
+      }
+    }
+    vertices = temp;
+  }
+
+  int closestPoint(Point p) {
+    float record = 100000000;
+    int closest = 0;
+    for (int i = 0; i < vertices.size(); i++) {
+      float d = PVector.dist(vertices.get(i), p);
+      if (d < record) {
+        record = d;
+        closest = i;
+      }
+    }
+    return closest;
+  }
+
 
   // Add a new vertex
   void addVertex(Point newVertex) {
@@ -34,6 +83,7 @@ class Poly {
 
 
     vertices.add(newVertex);
+    // sortVertices();
     // Whenever we have a new vertex
     // We have to recalculate the center
     // and re-sort the vertices
@@ -95,7 +145,8 @@ class Poly {
   void display() {
 
     // First draw the polygon
-    stroke(255);
+    stroke(255,0,0);
+    strokeWeight(2);
     noFill();
     beginShape();
     for (PVector v : vertices) {
@@ -122,15 +173,15 @@ class Poly {
         stroke(255);
         ellipse(v.x, v.y, 4, 4);
         textAlign(CENTER);
-        text(i, v.x+dir.x, v.y+dir.y+6);
+        //text(i, v.x+dir.x, v.y+dir.y+6);
       } 
 
 
       // Once we have two vertices draw the center
       if (vertices.size() > 1  ) {
         fill(255);
-        ellipse(centroid.x, centroid.y, 8, 8);
-        text("centroid", centroid.x, centroid.y+16);
+        //ellipse(centroid.x, centroid.y, 8, 8);
+        //text("centroid", centroid.x, centroid.y+16);
       }
     }
   }
