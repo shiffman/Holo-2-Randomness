@@ -7,6 +7,7 @@ import java.util.Collections;
 
 ArrayList<Point> points = new ArrayList<Point>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
+ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 
 boolean showVoronoi = false;
 boolean showDelaunay = true;
@@ -18,7 +19,7 @@ int counter = 3;
 void setup() {
   size(1200, 800, P2D_2X);
   //randomSeed(20);
-  //frameRate(5);
+  //frameRate(1);
   newPoint(0, 0);
   newPoint(width-1, 0);
   newPoint(0, height-1);
@@ -47,8 +48,13 @@ void draw() {
   }
 
   for (Edge e : edges) {
-    e.display();
+    //e.display();
   }
+  
+  for (Triangle t: triangles) {
+    t.display(); 
+  }
+  
   hull.display();
 
   if (debug) {

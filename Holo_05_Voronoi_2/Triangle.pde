@@ -3,24 +3,39 @@ class Triangle {
   Point b;
   Point c;
 
+  Edge ab;
+  Edge bc;
+  Edge ac;
+
   boolean highlight = false;
 
-  Edge[] edges = new Edge[3];
 
   Circle circum;
 
   float br = random(255);
+
+  Triangle(Edge ab, Edge bc, Edge ac) {
+    this.a = ab.a;
+    this.b = ab.b;
+    this.c = ac.b;
+
+    this.ab = ab;
+    this.bc = bc;
+    this.ac = ac;
+
+    circum = circumCenter();
+  }
 
   Triangle(Point a, Point b, Point c) {
     this.a = a;
     this.b = b;
     this.c = c;
 
-    edges[0] = new Edge(this.a, this.b);
-    edges[1] = new Edge(this.b, this.c);
-    edges[2] = new Edge(this.a, this.c);
-
-    circum = circumCenter();
+    // Make edges here?
+    // This constructor is just for the test during the convex hull stage
+    // ab = new Edge(this.a, this.b);
+    // bc = new Edge(this.b, this.c);
+    // ac = new Edge(this.a, this.c);
   }
 
   boolean isNeighbor(Triangle t) {
@@ -44,17 +59,10 @@ class Triangle {
 
 
   void display() {
+    stroke(255);
+    strokeWeight(1);
     if (highlight) {
-      display(255, 0, 0);
-    } else {
-      display(br, br, br);
-    }
-  }
-
-  void display(float rr, float gg, float bb) {
-    stroke(rr, gg, bb);
-    if (rr != 0 || gg != 0 || bb != 0) {
-      fill(rr, gg, bb, 100);
+      fill(255, 0, 0, 50);
     } else {
       noFill();
     }

@@ -9,13 +9,22 @@ void initTriangulation() {
   Point c = points.get(2);
   hull.addVertex(a);
   hull.addVertex(b);
-  hull.addVertex(c);
-  edges.add(new Edge(a, b)); 
-  edges.add(new Edge(b, c)); 
-  edges.add(new Edge(a, c));
+  hull.addVertex(c);  
+  Edge ab = new Edge(a, b);
+  Edge bc = new Edge(b, c);
+  Edge ac = new Edge(a, c);
+  edges.add(ab); 
+  edges.add(bc); 
+  edges.add(ac); 
+
+  Triangle t = new Triangle(ab, bc, ac);
+  //t.highlight = true;
+  triangles.add(t);
 }
 
 void triangulate(Point newPoint) {
+
+  ArrayList<Edge> newEdges = new ArrayList<Edge>();
 
   // This should probably be in the Poly class 
   // so that it can track its own convex-hull-ness
@@ -42,7 +51,7 @@ void triangulate(Point newPoint) {
     float dot2 = v2.x*-toTarget2.y + v2.y*toTarget2.x;//v2.dot(toTarget2);
 
     if ((dot1 > 0 && dot2 < 0) || (dot1 < 0 && dot2 > 0)) {
-      edges.add(new Edge(newPoint, current));
+      newEdges.add(new Edge(newPoint, current));
       if (upper == -1) {
         upper = j;
       } else {
@@ -62,10 +71,40 @@ void triangulate(Point newPoint) {
     Point p = hull.vertices.get(i);
     // Bad floating point math something thinks upper or lower points are inside the new triangle
     if (t.contains(p) && p != upperP && p != lowerP) {
-      edges.add(new Edge(newPoint, hull.vertices.get(i)));
+      newEdges.add(new Edge(newPoint, hull.vertices.get(i)));
       hull.vertices.remove(i);
     }
   }
+
+  for (int i = 0; i < newEdges.size(); i++) {
+    Edge e = newEdges.get(i);
+    edges.add(e);
+  }
+
+  Collections.sort(newEdges);
+
+
+  //if (newEdges.size() == 2) {
+  for (int i = 0; i < newEdges.size()-1; i++) {
+    Edge ab = newEdges.get(i);
+    Edge bc = newEdges.get(i+1);
+    // Find the other edge from our edges list
+    // This is terribly problematic probably but will do for now
+    Edge ac = new Edge(ab.a, bc.b);
+    for (Edge e : edges) {
+      if (e.equals(ac)) {
+        ac = e; 
+        break;
+      }
+    }
+
+
+    Triangle newT = new Triangle(ab, bc, ac);
+    //newT.highlight = true;
+    triangles.add(newT);
+  }
+
+
   hull.addVertex(newPoint);
   hull.sortVertices();
 }
