@@ -8,6 +8,8 @@ class Triangle {
   Edge ac;
 
   boolean highlight = false;
+  
+  boolean toRemove = false;
 
 
   Circle circum;
@@ -15,10 +17,11 @@ class Triangle {
   float br = random(255);
 
   Triangle(Edge ab, Edge bc, Edge ac) {
+    // Need the three unique points
     this.a = ab.a;
     this.b = ab.b;
     this.c = ac.b;
-
+    
     this.ab = ab;
     this.bc = bc;
     this.ac = ac;
@@ -36,6 +39,10 @@ class Triangle {
     // ab = new Edge(this.a, this.b);
     // bc = new Edge(this.b, this.c);
     // ac = new Edge(this.a, this.c);
+  }
+  
+  void markForRemoval() {
+    toRemove = true; 
   }
 
   boolean isNeighbor(Triangle t) {
@@ -59,7 +66,7 @@ class Triangle {
 
 
   void display() {
-    stroke(255);
+    stroke(0);
     strokeWeight(1);
     if (highlight) {
       fill(255, 0, 0, 50);
@@ -126,5 +133,10 @@ class Triangle {
     float s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
     float t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
     return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+  }
+  
+  String toString() {
+    return a + " " + b + " " + c; 
+    
   }
 }

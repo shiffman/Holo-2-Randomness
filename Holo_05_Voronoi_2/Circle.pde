@@ -9,13 +9,15 @@ class Circle {
   }
 
   void display() {
-    fill(255, 0, 0);
-    ellipse(center.x, center.y, 4, 4);
-    fill(255, 0, 0, 10);
+    stroke(0, 255, 0);
+    fill(0, 255, 0, 10);
     ellipse(center.x, center.y, r*2, r*2);
+    //fill(255, 0, 0, 10);
+    //ellipse(center.x, center.y, r*2, r*2);
   }
 
   boolean contains(PVector v) {
+    //println(center,v);
     float d = center.dist(v);
     if (d <= r) {// + 0.00001) {
       return true;

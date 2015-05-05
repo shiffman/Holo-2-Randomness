@@ -16,68 +16,166 @@ Poly hull = null;
 PVector test;
 int counter = 3;
 
+int triangulation = 0;
+int flipping = 1;
+
+int mode = triangulation;
+
+boolean flippingFinished = true;
+PrintWriter output; 
+
 void setup() {
   size(1200, 800, P2D_2X);
-  //randomSeed(20);
+  randomSeed(20);
   //frameRate(1);
+  output = createWriter("positions.txt"); 
   newPoint(0, 0);
   newPoint(width-1, 0);
-  newPoint(0, height-1);
-  newPoint(width-1, height-1);
+  newPoint(1, height-1);
+  newPoint(width-2, height-1);
 
-  for (int i = 0; i < 256; i++) {
+  for (int i = 0; i < 100; i++) {
     newPoint(random(width), random(height));
   }
+  output.flush();  // Writes the remaining data to the file
+  output.close();  // Finishes the file
+
   initTriangulation();
 }
 
 void newPoint(float x, float y) {
+  output.println(x + "," + y);  // Write the coordinate to the file
   points.add(new Point(x, y));
 }
 
+Edge testE;
 
 
 void draw() {
-  background(100);
-  Point current = points.get(counter);
-  triangulate(current);
 
-  int count = 0;
-  for (Point p : points) {
-    p.display();
-  }
-
-  for (Edge e : edges) {
-    //e.display();
-  }
-  
-  for (Triangle t: triangles) {
-    t.display(); 
-  }
-  
-  hull.display();
-
-  if (debug) {
-    if (hull != null) {
-      hull.polyDebug = true;
+  if (mode == triangulation) {
+    background(200);
+    Point current = points.get(counter);
+    triangulate(current);
+    int count = 0;
+    for (Point p : points) {
+      p.display();
     }
-    if (test != null) {
+    //noLoop();
+
+    for (Edge e : edges) {
+      e.display();
+    }
+
+    for (Triangle t : triangles) {
+      //t.display();
+    }
+    //frameRate(5);
+    hull.display();    
+    fill(255, 0, 0);
+    ellipse(current.x, current.y, 10, 10);
+
+    if (counter < points.size()-1) {
+      counter++;
+    } else {
+      mode = flipping;
+      counter = 0;
+    }
+  } else if (mode == flipping) {
+    background(200);
+    //noLoop();
+    //println(counter, edges.size(), triangles.size());
+
+    //frameRate(5);
+    for (Edge e : edges) {
+      e.display();
+    }
+
+    Edge e = edges.get(counter);
+    //println("---------------------");
+    //println(e);
+    if (e.illegal()) {
+      //testE = e;
+      e.setColor(255, 0, 0);
+      e.flip();
+      flippingFinished = false;
+      counter = 0;
+      resetEdgeColors();
+      cleanUp();
+      //println("Flipped");
+      //mode = 5;
+    } else {
+      e.setColor(0, 0, 255);
+      counter++;
+    }
+
+    if (counter == edges.size()) {
+      if (flippingFinished == true) {
+        mode = 5;
+      } else {
+        counter = 0;
+        flippingFinished = true;
+      }
+    }
+  } else if (mode == 5) {
+    background(200);
+    for (Point p : points) {
       fill(255, 0, 0);
-      ellipse(test.x, test.y, 8, 8);
-      //drawVector(test, width/2, height/2, 1);
     }
-  }
+    resetEdgeColors();
+    for (Edge e : edges) {
+      e.display();
+    }
+    for (Triangle t : triangles) {
+      t.display();
+    }
+    noLoop();
+  } else if (mode == 6) {
+    fill(255,200);
+    rect(0,0,width,height);
+    for (Point p : points) {
+      p.display();
+    }
+    resetEdgeColors();
+    for (Edge e : edges) {
+      //e.display();
+    }
+    for (Triangle t : triangles) {
+      //t.display();
+    }
+    testE.flip();
+    cleanUp();
 
-  fill(255, 0, 0);
-  ellipse(current.x, current.y, 10, 10);
-
-  if (counter < points.size()-1) {
-    counter++;
-  } else {
-    hull.display();
     noLoop();
   }
 }
+
+void mousePressed() {
+  //mode++;
+  //redraw();
+}
+
+void resetEdgeColors() {
+  for (Edge e : edges) {
+    e.setColor(255, 255, 255);
+  }
+}
+
+void cleanUp() {
+  for (int i = triangles.size()-1; i >=0; i--) {
+    Triangle t = triangles.get(i);
+    if (t.toRemove) {
+      triangles.remove(i);
+    }
+  }
+  for (int i = edges.size()-1; i >=0; i--) {
+    Edge e = edges.get(i);
+    if (e.toRemove) {
+      edges.remove(i);
+    }
+  }
+}
+
 
 
 void keyPressed() {

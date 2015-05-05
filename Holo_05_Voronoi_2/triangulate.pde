@@ -18,8 +18,14 @@ void initTriangulation() {
   edges.add(ac); 
 
   Triangle t = new Triangle(ab, bc, ac);
+  
+  ab.setTriangle(t);
+  bc.setTriangle(t);
+  ac.setTriangle(t);
+ 
   //t.highlight = true;
   triangles.add(t);
+  //println("First triangle", t);
 }
 
 void triangulate(Point newPoint) {
@@ -76,8 +82,10 @@ void triangulate(Point newPoint) {
     }
   }
 
+  //println("New Edge",newEdges.size());
   for (int i = 0; i < newEdges.size(); i++) {
     Edge e = newEdges.get(i);
+    //println(e);
     edges.add(e);
   }
 
@@ -85,22 +93,37 @@ void triangulate(Point newPoint) {
 
 
   //if (newEdges.size() == 2) {
+  //println("New Edges",newEdges.size());
   for (int i = 0; i < newEdges.size()-1; i++) {
     Edge ab = newEdges.get(i);
-    Edge bc = newEdges.get(i+1);
+    Edge ac = newEdges.get(i+1);
+    //println("ab",ab,"ac",ac);
     // Find the other edge from our edges list
     // This is terribly problematic probably but will do for now
-    Edge ac = new Edge(ab.a, bc.b);
+    Edge bc = new Edge(ab.b, ac.b);
+    //boolean found = false;
     for (Edge e : edges) {
-      if (e.equals(ac)) {
-        ac = e; 
+      if (e.equals(bc)) {
+        //found = true;
+        //println("Found: ", e);
+        bc = e; 
         break;
       }
     }
-
-
+    
+    //if (!found) {
+    //  println("BIG FAIL"); 
+    //}
+    //println("ab",ab);
+    //println("bc",bc);
+    //println("ac",ac);
     Triangle newT = new Triangle(ab, bc, ac);
+    ab.setTriangle(newT);
+    ac.setTriangle(newT);
+    bc.setTriangle(newT);
+    
     //newT.highlight = true;
+    //println("Adding a triangle", newT);
     triangles.add(newT);
   }
 
