@@ -28,7 +28,7 @@ void setup() {
   newPoint(1, height-1);
   newPoint(width-2, height-1);
 
-  for (int i = 0; i < 128; i++) {
+  for (int i = 0; i < 600; i++) {
     newPoint(random(width), random(height));
   }
   output.flush();  // Writes the remaining data to the file
@@ -76,8 +76,9 @@ void draw() {
       e.setColor(255, 0, 0);
       e.flip();
       flippingFinished = false;
-      counter = 0;
-      resetEdgeColors();
+      //counter = 0;
+      //resetEdgeColors();
+      counter++;
       cleanUp();
     } else {
       e.setColor(255, 255, 255);
