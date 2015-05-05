@@ -66,7 +66,7 @@ class Triangle {
 
 
   void display() {
-    stroke(0);
+    stroke(255, 127);
     strokeWeight(1);
     if (highlight) {
       fill(255, 0, 0, 50);

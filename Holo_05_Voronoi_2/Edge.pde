@@ -39,31 +39,16 @@ class Edge implements Comparable<Edge> {
       return false;
     }
 
-    //t1.highlight = true;
-    //t2.highlight = true;
-    //t1.display();
-    //t2.display();
-
     Point p = this.notIncluded(t2);
     if (p == null) {
       println("BIG FAIL");
     }
-    fill(255, 0, 0);
-    ellipse(p.x, p.y, 16, 16);
     t1.showCircle();
     // println(p);
     // It's an illegal edge if the non shared point is in there
     if (t1.circleContains(p)) {
       return true;
     }
-
-
-
-    //p = this.notIncluded(t1);
-    //if (t2.circleContains(p)) {
-    //  return true;
-    //}
-
     return false;
   }
 
@@ -79,43 +64,18 @@ class Edge implements Comparable<Edge> {
     }
   }
 
-
-
-  //void setTriangles(Triangle t1_, Triangle t2_) {
-  //  t1 = t1_;
-  //  t2 = t2_;
-  //}
-
   void markForRemoval() {
     toRemove = true;
   }
 
-  // Swap out an old triangle for a new one
-  //void swap(Triangle oldT1, Triangle newT1, Triangle oldT2, Triangle newT2) {
-  //  println("SWAPIT");
-  //  if (t1 == oldT1) {
-  //    println("t1 swap t1");
-  //    t1 = newT1;
-  //  } else if (t1 == oldT2) {
-  //    println("t1 swap t2");
-  //    t1 = newT2;
-  //  }
-  //  if (t2 == oldT1) {
-  //    println("t2 swap t1");
-  //    t2 = newT1;
-  //  } else if (t2 == oldT2) {
-  //    println("t2 swap t2");
-  //    t2 = newT2;
-  //  }
-  //}
 
   void swap(Triangle oldT, Triangle newT) {
-    println("SWAPIT");
+    //println("SWAPIT");
     if (t1 == oldT) {
-      println("t1 swap");
+      //println("t1 swap");
       t1 = newT;
     } else if (t2 == oldT) {
-      println("t2 swap");
+      //println("t2 swap");
       t2 = newT;
     }
   }
@@ -147,22 +107,13 @@ class Edge implements Comparable<Edge> {
     newE2a.swap(t2, newT1);
     newE1b.swap(t1, newT2);
     newE2b.swap(t2, newT2);
-
-    edges.add(newE3);
+    
+    
+    // Add edge later in the right spot
+    // edges.add(newE3);
+    newEdge = newE3;
     triangles.add(newT1);
     triangles.add(newT2);
-    
-    //newE3.setColor(0,255,0);
-    //newE3.display();
-    
-    //newE3.t1.highlight = true;
-    //newE3.t2.highlight = true;
-    //newE3.t1.display();
-    //newE3.t2.display();
-    //newE3.setColor(0,0,255);
-    //newE3.display();
-    
-    
   }
 
 
@@ -203,7 +154,7 @@ class Edge implements Comparable<Edge> {
   }
 
   void display() {
-    stroke(col);
+    stroke(col, 127);
     strokeWeight(1);
     line(a.x, a.y, b.x, b.y);
   }

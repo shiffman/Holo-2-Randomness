@@ -8,9 +8,16 @@ class Point extends PVector implements Comparable<Point> {
   Point(float x, float y) {
     super(x, y);
   }
+  
+  void display(int wght) {
+    stroke(255,200);
+    strokeWeight(wght);
+    point(x,y);
+    
+  }
 
   void display() {
-    stroke(0);
+    stroke(255,200);
     strokeWeight(4);
     point(x,y);
   }

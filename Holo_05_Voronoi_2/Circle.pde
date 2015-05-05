@@ -9,8 +9,8 @@ class Circle {
   }
 
   void display() {
-    stroke(0, 255, 0);
-    fill(0, 255, 0, 10);
+    stroke(255, 175);
+    fill(255, 25);
     ellipse(center.x, center.y, r*2, r*2);
     //fill(255, 0, 0, 10);
     //ellipse(center.x, center.y, r*2, r*2);

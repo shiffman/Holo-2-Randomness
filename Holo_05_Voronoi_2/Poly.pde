@@ -145,7 +145,7 @@ class Poly {
   void display() {
 
     // First draw the polygon
-    stroke(255,0,0);
+    stroke(255);
     strokeWeight(2);
     noFill();
     beginShape();
