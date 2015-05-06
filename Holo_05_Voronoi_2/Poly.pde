@@ -1,16 +1,23 @@
+// Processing triangulation
+// Reference: https://www.youtube.com/watch?v=7VcuKj1_nHA
+// http://geomalgorithms.com/a15-_tangents.html
+// http://www.personal.kent.edu/~rmuhamma/Compgeometry/MyCG/ConvexHull/incrementCH.htm
 // Daniel Shiffman
-// Hanukkah 2011
-// 8 nights of Processing examples
-// http://www.shiffman.net
+// May 2015
+// https://github.com/shiffman/Holo-2-Randomness
 
-// A class that generates a polygon sorted
-// according to relative angle from center
+// This class comes from: http://shiffman.net/2011/12/23/night-4-sorting-the-vertices-of-a-polygon/
+// But it's been adjusted to do a few more things
+
+// Maybe this should be more specifically a convex hull class
 
 class Poly {
   // A list of vertices
   ArrayList<Point> vertices;
   // The center
   PVector centroid;
+
+  // Show more info?
   boolean polyDebug = false;
 
   Poly() {
@@ -36,58 +43,61 @@ class Poly {
     deleteVertex(vertices.size()-1);
   }
 
-  void reorder(int start) {
-    reorder(start, false);
-  }
 
-  void reorder(int start, boolean reverse) {
-    int total = vertices.size();
-    ArrayList<Point> temp = new ArrayList<Point>();
-    int index = start;
-    while (true) {
 
-      temp.add(vertices.get(index));
-      if (reverse) {
-        index = (index - 1 + total) % total;
-      } else {
-        index = (index + 1) % total;
-      }
-      
-      if (index == start) {
-        break;
-      }
-    }
-    vertices = temp;
-  }
+  // This is a weird thing that I am not using anymore
+  // but could be useful
+  // Reorders list with a specific vertex at index 0
 
-  int closestPoint(Point p) {
-    float record = 100000000;
-    int closest = 0;
-    for (int i = 0; i < vertices.size(); i++) {
-      float d = PVector.dist(vertices.get(i), p);
-      if (d < record) {
-        record = d;
-        closest = i;
-      }
-    }
-    return closest;
-  }
+  //void reorder(int start) {
+  //  reorder(start, false);
+  //}
+
+  //void reorder(int start, boolean reverse) {
+  //  int total = vertices.size();
+  //  ArrayList<Point> temp = new ArrayList<Point>();
+  //  int index = start;
+  //  while (true) {
+  //    temp.add(vertices.get(index));
+  //    if (reverse) {
+  //      index = (index - 1 + total) % total;
+  //    } else {
+  //      index = (index + 1) % total;
+  //    }
+  //    if (index == start) {
+  //      break;
+  //    }
+  //  }
+  //  vertices = temp;
+  //}
+
+
+  // Which point on this polygon is closest to another
+  // Also not using at the moment
+  //int closestPoint(Point p) {
+  //  float record = 100000000;
+  //  int closest = 0;
+  //  for (int i = 0; i < vertices.size(); i++) {
+  //    float d = PVector.dist(vertices.get(i), p);
+  //    if (d < record) {
+  //      record = d;
+  //      closest = i;
+  //    }
+  //  }
+  //  return closest;
+  //}
 
 
   // Add a new vertex
   void addVertex(Point newVertex) {
-
+    // Don't add duplicate vertices?
     if (vertices.contains(newVertex)) {
       return;
     }
-
-
     vertices.add(newVertex);
+    // Could automatically sort and update center
     // sortVertices();
-    // Whenever we have a new vertex
-    // We have to recalculate the center
-    // and re-sort the vertices
-    //updateCentroid();
+    // updateCentroid();
   }
 
   // The center is the average location of all vertices
@@ -101,6 +111,7 @@ class Poly {
 
 
   // Sorting the ArrayList
+  // This could use some work
   void sortVertices() {
     // Make sure center is updated 
     updateCentroid();
@@ -143,7 +154,6 @@ class Poly {
 
   // Draw everything!
   void display() {
-
     // First draw the polygon
     stroke(255);
     strokeWeight(2);
@@ -153,7 +163,6 @@ class Poly {
       vertex(v.x, v.y);
     } 
     endShape(CLOSE);
-
 
     if (polyDebug) {
       // Then we'll draw some addition information
@@ -173,15 +182,14 @@ class Poly {
         stroke(255);
         ellipse(v.x, v.y, 4, 4);
         textAlign(CENTER);
-        //text(i, v.x+dir.x, v.y+dir.y+6);
+        text(i, v.x+dir.x, v.y+dir.y+6);
       } 
-
 
       // Once we have two vertices draw the center
       if (vertices.size() > 1  ) {
         fill(255);
-        //ellipse(centroid.x, centroid.y, 8, 8);
-        //text("centroid", centroid.x, centroid.y+16);
+        ellipse(centroid.x, centroid.y, 8, 8);
+        text("centroid", centroid.x, centroid.y+16);
       }
     }
   }

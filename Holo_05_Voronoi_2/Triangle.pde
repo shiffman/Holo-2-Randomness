@@ -1,21 +1,33 @@
+// Processing triangulation
+// Reference: https://www.youtube.com/watch?v=7VcuKj1_nHA
+// http://geomalgorithms.com/a15-_tangents.html
+// http://www.personal.kent.edu/~rmuhamma/Compgeometry/MyCG/ConvexHull/incrementCH.htm
+// Daniel Shiffman
+// May 2015
+// https://github.com/shiffman/Holo-2-Randomness
+
+// A triangle
+
 class Triangle {
+  // It has three points
   Point a;
   Point b;
   Point c;
 
+  // And three edges
   Edge ab;
   Edge bc;
   Edge ac;
 
+  // highlight this triangle?
   boolean highlight = false;
-  
+  // Delete this triangle?
   boolean toRemove = false;
-
-
+   
+  // Circumcircle
   Circle circum;
-
-  float br = random(255);
-
+  
+  // Make a triangle from 3 edges
   Triangle(Edge ab, Edge bc, Edge ac) {
     // Need the three unique points
     this.a = ab.a;
@@ -28,7 +40,8 @@ class Triangle {
 
     circum = circumCenter();
   }
-
+  
+  // Make a triangle from three points
   Triangle(Point a, Point b, Point c) {
     this.a = a;
     this.b = b;
@@ -44,7 +57,9 @@ class Triangle {
   void markForRemoval() {
     toRemove = true; 
   }
-
+  
+  // The triangle should track its own neighbors
+  // This is crazy that I'm searching the entire edge list?
   boolean isNeighbor(Triangle t) {
     boolean neighbor = false;
     for (Edge e1 : edges) {
@@ -55,16 +70,18 @@ class Triangle {
     }
     return neighbor;
   }
-
+  
+  // Update the circumcircle
   void update() {
     circum = circumCenter();
   }
-
+  
+  // Is a point inside the circumcircle
   boolean circleContains(PVector v) {
     return circum.contains(v);
   }
 
-
+  // Draw
   void display() {
     stroke(255, 127);
     strokeWeight(1);
@@ -79,7 +96,8 @@ class Triangle {
     vertex(c.x, c.y);
     endShape(CLOSE);
   }
-
+  
+  // Show circle
   void showCircle() {
     circum.display();
   }
