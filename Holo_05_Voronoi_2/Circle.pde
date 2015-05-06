@@ -10,20 +10,24 @@
 class Circle {
   
   // Center
-  PVector center;
+  Point center;
   // Radius
   float r;
 
-  Circle(PVector c, float r_) {
+  Circle(Point c, float r_) {
     center = c;
     r = r_;
   }
 
   // Draw circle
   void display() {
-    strokeWeight(1);
-    stroke(255, 175);
-    fill(255, 25);
+    display(1,255,255,255);
+  }
+  
+  void display(float wght, float rr, float gg, float bb) {
+    strokeWeight(wght);
+    stroke(rr,gg,bb, 175);
+    fill(rr,gg,bb, 25);
     ellipse(center.x, center.y, r*2, r*2);
   }
 

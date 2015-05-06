@@ -93,9 +93,9 @@ class Triangle {
   // Draw
   void display(int wght, float rr, float gg, float bb, boolean fillIt) {
     strokeWeight(wght);
-    stroke(255, 127);
+    stroke(255);
     if (fillIt) {
-      fill(rr, gg, bb, 50);
+      fill(rr, gg, bb, 200);
     } else {
       noFill();
     }
@@ -108,13 +108,17 @@ class Triangle {
   }
 
   // Show circle
+  void showCircle(float wght, float rr, float gg, float bb) {
+    circum.display(wght, rr, gg, bb);
+  }
+  
   void showCircle() {
     circum.display();
   }
 
   // From: http://www.ics.uci.edu/~eppstein/junkyard/circumcenter.html
   Circle circumCenter() {
-    PVector center = new PVector(); 
+    Point center = new Point(); 
 
     // D = 2( a_1 c_0 + b_1 a_0 - b_1 c_0 -a_1 b_0 -c_1 a_0 + c_1 b_0 ).
     float commonD = 2 * (a.y*c.x + b.y*a.x - b.y*c.x - a.y*b.x - c.y*a.x + c.y*b.x);

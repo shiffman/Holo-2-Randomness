@@ -52,7 +52,6 @@ class Edge implements Comparable<Edge> {
     float rr = 255;
     float gg = 255;
     float bb = 255;
-    int wght = 16;
     if (!legal) {
       rr = 255;
       gg = 0;
@@ -64,11 +63,11 @@ class Edge implements Comparable<Edge> {
       gg = 255;
       bb = 0;
     }
-    t1.showCircle();
-    t1.display(wght, rr, gg, bb);
+    t1.showCircle(4, rr, gg, bb);
+    t1.display(16, rr, gg, bb);
     if (outsideT1 != null) {
-      outsideT1.display(wght, rr, gg, bb);
-      t2.display(wght, rr, gg, bb);
+      outsideT1.display(16, rr, gg, bb);
+      t2.display(16, rr, gg, bb);
     }
     prevState = legal;
   }
@@ -198,21 +197,30 @@ class Edge implements Comparable<Edge> {
     return false;
   }
 
-  // Give it a color
-  void setColor(float r, float g, float b) {
-    col = color(r, g, b);
+  void display() { 
+    display(1, 255, 255, 255);
   }
 
-  // Draw a line
-  void display() { 
-    stroke(col, 127);
-    strokeWeight(1);
+  void display(float wght, float rr, float gg, float bb) { 
+    stroke(rr, gg, bb, 127);
+    strokeWeight(wght);
     line(a.x, a.y, b.x, b.y);
   }
+
 
   // Console printing
   String toString() {
     return a.toString() + " : " + b.toString();
+  }
+
+  Edge getVoronoi() {
+    if (t1 != null && t2 != null) {
+      Point newA = t1.circum.center;
+      Point newB = t2.circum.center;
+      return new Edge(newA, newB);
+    } else {
+      return null;
+    }
   }
 }
 

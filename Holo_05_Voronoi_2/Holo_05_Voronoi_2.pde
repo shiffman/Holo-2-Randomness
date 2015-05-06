@@ -15,6 +15,11 @@ ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 
 boolean debug = true;
 
+boolean showDelaunay = true;
+boolean showVoronoi = true;
+boolean showPoints = true;
+
+
 // This is an object for a generic Polygon
 // Using to track convex hull at the moment
 // But could be used for Voronoi regions?
@@ -47,7 +52,7 @@ void setup() {
   newPoint(width-2, height-1);
 
   // A bunch of random points
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 64; i++) {
     newPoint(random(width), random(height));
   }
 
@@ -71,6 +76,11 @@ int illegalState = 0;
 void draw() {
   background(51);
 
+  if (illegalState > 0) {
+    //delay(250);
+  }
+
+
   // Starting off with Triangulation
   if (mode == 0) {
 
@@ -85,7 +95,7 @@ void draw() {
     for (Edge e : edges) {
       e.display();
     }
-    
+
     hull.display();    
 
     // Show current point bigger
@@ -105,7 +115,7 @@ void draw() {
       // Show all edges
       e.display();
     }
-    frameRate(10);
+    //frameRate(10);
 
     // Current edge
     Edge currentE = edges.get(counter);
@@ -148,19 +158,29 @@ void draw() {
   } else if (mode == 2) {
 
     // We're done, let's see all the triangles
-    for (Triangle t : triangles) {
-      t.display();
+    if (showDelaunay) {
+      for (Triangle t : triangles) {
+        t.display();
+      }
+    } 
+
+    if (showPoints) {
+      for (Point p : points) {
+        p.display(4);
+      }
+    } 
+
+    if (showVoronoi) {
+      for (Edge e : edges) {
+        Edge vor = e.getVoronoi();
+        if (vor != null) {
+          vor.display(2, 255,255,255);
+        }
+      }
     }
-    noLoop();
   }
 }
 
-// Reset all the edge colors
-void resetEdgeColors() {
-  for (Edge e : edges) {
-    e.setColor(255, 255, 255);
-  }
-}
 
 // Global variable to track new edge added during edge flipping
 // This could probably be improved
@@ -183,5 +203,15 @@ void cleanUp() {
       edges.add(i, newEdge);
       break;
     }
+  }
+}
+
+void keyPressed() {
+  if (key == 'd') {
+    showDelaunay = !showDelaunay;
+  } else if (key == 'v') {
+    showVoronoi = !showVoronoi;
+  } else if (key == 'p') {
+    showPoints = !showPoints;
   }
 }
