@@ -35,6 +35,8 @@ PrintWriter output;
 void setup() {
   size(1200, 800, P2D_2X);
   randomSeed(10);
+
+  //frameRate(5);
   // Write the file
   output = createWriter("positions.txt"); 
 
@@ -45,7 +47,7 @@ void setup() {
   newPoint(width-2, height-1);
 
   // A bunch of random points
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 100; i++) {
     newPoint(random(width), random(height));
   }
 
@@ -64,6 +66,7 @@ void newPoint(float x, float y) {
 }
 
 
+int illegalState = 0;
 
 void draw() {
   background(51);
@@ -82,6 +85,7 @@ void draw() {
     for (Edge e : edges) {
       e.display();
     }
+    
     hull.display();    
 
     // Show current point bigger
@@ -101,25 +105,34 @@ void draw() {
       // Show all edges
       e.display();
     }
+    frameRate(10);
 
     // Current edge
-    Edge e = edges.get(counter);
+    Edge currentE = edges.get(counter);
     // Is it legal?
-    if (e.illegal()) {
+    if (currentE.illegal()) {
       // It's not, flip it!
-      e.setColor(255, 0, 0);
-      e.flip();
+      currentE.flip();
       // We're not done, illegal edge!
       flippingFinished = false;
+      illegalState = 1;
       // Delete extra edges and triangles
       cleanUp();
+      // We will draw illegal triangles twice for animation purposes
     } else {
-      // It's legal
-      e.setColor(255, 255, 255);
+      if (illegalState == 1) {
+        illegalState = 2;
+      } else if (illegalState == 2) {
+        illegalState = 0;
+      } 
+      // Go to the next
+      counter++;
     }
-    // Go to the next
-    counter++;
-    
+
+    // Draw one triangle's circle
+
+    currentE.displayState(illegalState);
+
     // Are we done
     if (counter == edges.size()) {
       // All the edges are legal!
@@ -133,7 +146,7 @@ void draw() {
       }
     }
   } else if (mode == 2) {
-    
+
     // We're done, let's see all the triangles
     for (Triangle t : triangles) {
       t.display();

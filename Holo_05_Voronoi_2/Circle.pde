@@ -21,6 +21,7 @@ class Circle {
 
   // Draw circle
   void display() {
+    strokeWeight(1);
     stroke(255, 175);
     fill(255, 25);
     ellipse(center.x, center.y, r*2, r*2);

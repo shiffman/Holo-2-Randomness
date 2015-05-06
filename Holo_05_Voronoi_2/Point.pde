@@ -17,20 +17,21 @@ class Point extends PVector implements Comparable<Point> {
   Point(float x, float y) {
     super(x, y);
   }
-  
-  void display(int wght) {
-    stroke(255,200);
+
+  void display(int wght, float r, float g, float b) {
+    stroke(r, g, b, 200);
     strokeWeight(wght);
-    point(x,y);
-    
+    point(x, y);
+  }
+
+  void display(int wght) {
+    display(wght, 255, 255, 255);
   }
 
   void display() {
-    stroke(255,200);
-    strokeWeight(4);
-    point(x,y);
+    display(1, 255, 255, 255);
   }
-  
+
   // Sort from left to right
   int compareTo(Point other) {
     float diff = this.x - other.x;

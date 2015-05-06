@@ -55,7 +55,6 @@ void triangulate(Point newPoint) {
   // I could probably implement this in a way where I'm not
   // resorting the vertices by inserting the point in the right place
   // but eh, this will do for now
-  hull.sortVertices();
   // Find bi-tangents
   // For now finding upper and lower in one loop but could improve this
   int total = hull.vertices.size();
@@ -143,4 +142,8 @@ void triangulate(Point newPoint) {
 
   // And we've got a new point now
   hull.addVertex(newPoint);
+  
+  // Resort everything
+  hull.sortVertices();
+
 }

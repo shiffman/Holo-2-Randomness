@@ -19,28 +19,26 @@ class Triangle {
   Edge bc;
   Edge ac;
 
-  // highlight this triangle?
-  boolean highlight = false;
   // Delete this triangle?
   boolean toRemove = false;
-   
+
   // Circumcircle
   Circle circum;
-  
+
   // Make a triangle from 3 edges
   Triangle(Edge ab, Edge bc, Edge ac) {
     // Need the three unique points
     this.a = ab.a;
     this.b = ab.b;
     this.c = ac.b;
-    
+
     this.ab = ab;
     this.bc = bc;
     this.ac = ac;
 
     circum = circumCenter();
   }
-  
+
   // Make a triangle from three points
   Triangle(Point a, Point b, Point c) {
     this.a = a;
@@ -53,11 +51,11 @@ class Triangle {
     // bc = new Edge(this.b, this.c);
     // ac = new Edge(this.a, this.c);
   }
-  
+
   void markForRemoval() {
-    toRemove = true; 
+    toRemove = true;
   }
-  
+
   // The triangle should track its own neighbors
   // This is crazy that I'm searching the entire edge list?
   boolean isNeighbor(Triangle t) {
@@ -70,33 +68,45 @@ class Triangle {
     }
     return neighbor;
   }
-  
+
   // Update the circumcircle
   void update() {
     circum = circumCenter();
   }
-  
+
   // Is a point inside the circumcircle
   boolean circleContains(PVector v) {
     return circum.contains(v);
   }
 
-  // Draw
+
   void display() {
+    display(1, 0, 0, 0, false);
+  }
+  void display(float r, float g, float b) {
+    display(1, r, g, b, true);
+  }
+  void display(int wght, float r, float g, float b) {
+    display(wght, r, g, b, true);
+  }
+
+  // Draw
+  void display(int wght, float rr, float gg, float bb, boolean fillIt) {
+    strokeWeight(wght);
     stroke(255, 127);
-    strokeWeight(1);
-    if (highlight) {
-      fill(255, 0, 0, 50);
+    if (fillIt) {
+      fill(rr, gg, bb, 50);
     } else {
       noFill();
     }
+    strokeWeight(1);
     beginShape();
     vertex(a.x, a.y);
     vertex(b.x, b.y);
     vertex(c.x, c.y);
     endShape(CLOSE);
   }
-  
+
   // Show circle
   void showCircle() {
     circum.display();
@@ -152,9 +162,8 @@ class Triangle {
     float t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
     return s > 0 && t > 0 && (s + t) < 2 * A * sign;
   }
-  
+
   String toString() {
-    return a + " " + b + " " + c; 
-    
+    return a + " " + b + " " + c;
   }
 }

@@ -12,15 +12,19 @@ class Edge implements Comparable<Edge> {
   // An edge is two points
   Point a;
   Point b;
-  
+
   // Neighboring triangles
   // Should probably say right / left?
   Triangle t1;
   Triangle t2;
-  
+
   // A color if I want to highlight edges
   color col = color(255);
-  
+
+  boolean legal = true;
+
+  boolean prevState = legal;
+
   // Is it slated for deletion?
   boolean toRemove = false;
 
@@ -42,45 +46,73 @@ class Edge implements Comparable<Edge> {
     return null;
   }
 
+
+  void displayState(int illegalState) {
+
+    float rr = 255;
+    float gg = 255;
+    float bb = 255;
+    int wght = 16;
+    if (!legal) {
+      rr = 255;
+      gg = 0;
+      bb = 0;
+      // Using a global variable here
+      // Bad idea
+    } else if (illegalState == 2) {
+      rr = 0;
+      gg = 255;
+      bb = 0;
+    }
+    t1.showCircle();
+    t1.display(wght, rr, gg, bb);
+    if (outsideT1 != null) {
+      outsideT1.display(wght, rr, gg, bb);
+      t2.display(wght, rr, gg, bb);
+    }
+    prevState = legal;
+  }
+
+
+  Point outsideT1 = null;
+
   boolean illegal() {
     // Edge edges
+    legal = true;
     if (t1 == null || t2 == null) {
       // It's legal if it's only got one neighbor
       return false;
     }
-    
+
     // Which is not included
-    Point p = this.notIncluded(t2);
-    if (p == null) {
+    outsideT1 = this.notIncluded(t2);
+    if (outsideT1 == null) {
       println("Something went wrong here!");
     }
-    
-    // Draw one triangle's circle
-    t1.showCircle();
 
     // It's an illegal edge if the non-shared point is inside
-    if (t1.circleContains(p)) {
-      return true;
+    if (t1.circleContains(outsideT1)) {
+      legal = false;
     }
-    return false;
+    return !legal;
   }
-  
-  
+
+
   // Assign a Triangle neighbor
   void setTriangle(Triangle t) {
     // First goes to t1
     if (t1 == null) {
       t1 = t;
-    // I already assigned this triangle here, stop it!
+      // I already assigned this triangle here, stop it!
     } else if (t1 == t) {
       // duplicate!
-    // Second goes to t2
+      // Second goes to t2
     } else {
       t2 = t;
     }
   }
-  
-  
+
+
   // This Edge should be deleted
   void markForRemoval() {
     toRemove = true;
@@ -94,20 +126,20 @@ class Edge implements Comparable<Edge> {
       t2 = newT;
     }
   }
-  
+
   // Flip this edge!
   // This method is something of a disaster, help!
   void flip() {
-    
+
     // These three things will be deleted when all is said and done
     t1.markForRemoval();
     t2.markForRemoval();
     this.markForRemoval();
-    
+
     // Two non shared points
     Point p1 = this.notIncluded(t1);
     Point p2 = this.notIncluded(t2);
-    
+
     // Find me the edge that goes from a to p1
     // Gosh this is really terrible!
     Edge newE1a = findEdge(t1, t2, a, p1);
@@ -129,8 +161,8 @@ class Edge implements Comparable<Edge> {
     newE2a.swap(t2, newT1);
     newE1b.swap(t1, newT2);
     newE2b.swap(t2, newT2);
-    
-    
+
+
     // edges.add(newE3);
     // Save the new edge to be added later, not now
     newEdge = newE3;
@@ -151,8 +183,8 @@ class Edge implements Comparable<Edge> {
       return 0;
     }
   }
-  
-  
+
+
   // Same edge as another edge even if the points are reversed?
   boolean equals(Edge other) {
     return (a == other.a && b == other.b) || (a == other.b && b == other.a);
@@ -165,7 +197,7 @@ class Edge implements Comparable<Edge> {
     }
     return false;
   }
-  
+
   // Give it a color
   void setColor(float r, float g, float b) {
     col = color(r, g, b);
@@ -177,7 +209,7 @@ class Edge implements Comparable<Edge> {
     strokeWeight(1);
     line(a.x, a.y, b.x, b.y);
   }
-  
+
   // Console printing
   String toString() {
     return a.toString() + " : " + b.toString();
