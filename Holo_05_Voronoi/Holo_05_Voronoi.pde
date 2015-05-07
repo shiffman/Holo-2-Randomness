@@ -39,7 +39,7 @@ PrintWriter output;
 
 void setup() {
   size(1200, 800, P2D_2X);
-  randomSeed(10);
+  randomSeed(11);
 
   //frameRate(5);
   // Write the file
@@ -50,11 +50,12 @@ void setup() {
   newPoint(width-1, 0);
   newPoint(1, height-1);
   newPoint(width-2, height-1);
-
-  // A bunch of random points
-  for (int i = 0; i < 64; i++) {
-    newPoint(random(width), random(height));
+  
+  // Some random points
+  for (int i = 0; i < 50; i++) {
+    newPoint(random(width),random(height)); 
   }
+
 
   // Finish the file
   output.flush();  // Writes the remaining data to the file
@@ -174,7 +175,7 @@ void draw() {
       for (Edge e : edges) {
         Edge vor = e.getVoronoi();
         if (vor != null) {
-          vor.display(2, 255,255,255);
+          vor.display(2, 255, 255, 255);
         }
       }
     }
