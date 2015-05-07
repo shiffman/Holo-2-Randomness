@@ -134,11 +134,6 @@ void draw() {
     }
   } 
 
-  if (!mousePressed) {
-    Point p = points.get(testCount);
-    p.display(16, 0, 255, 0);
-  }
-
   if (showPoints) {
     for (Point p : points) {
       p.display(4);
