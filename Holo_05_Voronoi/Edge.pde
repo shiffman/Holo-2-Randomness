@@ -18,12 +18,10 @@ class Edge implements Comparable<Edge> {
   Triangle t1;
   Triangle t2;
 
-  // A color if I want to highlight edges
-  color col = color(255);
+  boolean failed = false;
+  int timesFailed = 0;
 
   boolean legal = true;
-
-  boolean prevState = legal;
 
   // Is it slated for deletion?
   boolean toRemove = false;
@@ -46,6 +44,14 @@ class Edge implements Comparable<Edge> {
     return null;
   }
 
+  void failed() {
+    timesFailed++;
+    if (timesFailed > 100) {
+      println("This edge is a problem and both flips are illegal");
+      failed = true;
+    }
+  }
+
 
   void displayState(int illegalState) {
 
@@ -65,11 +71,11 @@ class Edge implements Comparable<Edge> {
     }
     t1.showCircle(4, rr, gg, bb);
     t1.display(4, rr, gg, bb);
+    Point outsideT1 = this.notIncluded(t2);
     if (outsideT1 != null) {
       outsideT1.display(16, rr, gg, bb);
       t2.display(4, rr, gg, bb);
     }
-    prevState = legal;
 
     stroke(rr, gg, bb);
     strokeWeight(8);
@@ -77,9 +83,12 @@ class Edge implements Comparable<Edge> {
   }
 
 
-  Point outsideT1 = null;
 
   boolean illegal() {
+    if (failed) {
+      legal = true;
+      return false;
+    }
     // Edge edges
     legal = true;
     if (t1 == null || t2 == null) {
@@ -88,16 +97,36 @@ class Edge implements Comparable<Edge> {
     }
 
     // Which is not included
-    outsideT1 = this.notIncluded(t2);
+    Point outsideT1 = this.notIncluded(t2);
     if (outsideT1 == null) {
-      println("Something went wrong here!");
+      println("This edge has two duplicate triangles??!?");
+      return false;
     }
 
     // It's an illegal edge if the non-shared point is inside
     if (t1.circleContains(outsideT1)) {
       legal = false;
     }
+    
+    
+    // Double check
+    if (legal) {
+      Point outsideT2 = this.notIncluded(t1);
+      if (t2.circleContains(outsideT2)) {
+        legal = false;
+      }
+    }
     return !legal;
+  }
+
+  float howBad() {
+
+    // Which is not included
+    Point outsideT1 = this.notIncluded(t2);
+    Point outsideT2 = this.notIncluded(t1);
+    float d1 = PVector.dist(t1.circum.center, outsideT1);
+    float d2 = PVector.dist(t2.circum.center, outsideT2);
+    return (d1-t1.circum.r) + (d2-t2.circum.r);
   }
 
 
@@ -190,25 +219,25 @@ class Edge implements Comparable<Edge> {
 
   // This is just for sorting by b's y for making new triangles
   int compareTo(Edge other) {
-   PVector v1 = PVector.sub(this.b, this.a);
-   PVector v2 = PVector.sub(other.b, other.a);
+    PVector v1 = PVector.sub(this.b, this.a);
+    PVector v2 = PVector.sub(other.b, other.a);
 
-   float a1 = v1.heading();
-   float a2 = v2.heading();
-   if (a1 < 0) {
-     a1 = map(a1, -PI, 0, PI, TWO_PI);
-   }
-   if (a2 < 0) {
-     a2 = map(a2, -PI, 0, PI, TWO_PI);
-   }
-   float diff = a1 - a2;
-   if (diff < 0) {
-     return -1;
-   } else if (diff > 0) {
-     return 1;
-   } else {
-     return 0;
-   }
+    float a1 = v1.heading();
+    float a2 = v2.heading();
+    if (a1 < 0) {
+      a1 = map(a1, -PI, 0, PI, TWO_PI);
+    }
+    if (a2 < 0) {
+      a2 = map(a2, -PI, 0, PI, TWO_PI);
+    }
+    float diff = a1 - a2;
+    if (diff < 0) {
+      return -1;
+    } else if (diff > 0) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
 

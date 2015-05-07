@@ -12,7 +12,7 @@ void initTriangulation() {
 
   // Sort all the points
   Collections.sort(points);
-
+  
   // The convex hull
   hull = new Poly();
   // The first three points
@@ -31,7 +31,7 @@ void initTriangulation() {
   edges.add(ab); 
   edges.add(bc); 
   edges.add(ac); 
-
+  
   Triangle t = new Triangle(ab, bc, ac);
 
   // Assign triangle to the edges
@@ -40,13 +40,10 @@ void initTriangulation() {
   ac.setTriangle(t);
   triangles.add(t);
 
-  // We'll manually make the first triangle
-  // so start at 3
-  counter = 3;
 }
 
 void triangulate(Point newPoint) {
-
+  
   // What new edges will come out of this
   ArrayList<Edge> newEdges = new ArrayList<Edge>();
 
@@ -72,9 +69,9 @@ void triangulate(Point newPoint) {
     // http://stackoverflow.com/questions/13221873/determining-if-one-2d-vector-is-to-the-right-or-left-of-another
     float dot1 = v1.x*-toTarget1.y + v1.y*toTarget1.x;//v1.dot(toTarget1);
     float dot2 = v2.x*-toTarget2.y + v2.y*toTarget2.x;//v2.dot(toTarget2);
-
+    
     // Make a new edge from new point to two bi tangents
-    if ((dot1 > 0 && dot2 < 0) || (dot1 < 0 && dot2 > 0)) {
+    if ((dot1 >= 0 && dot2 <= 0) || (dot1 <= 0 && dot2 >= 0) || (dot1 == 0 && dot2 == 0)) {
       newEdges.add(new Edge(newPoint, current));
       if (upper == -1) {
         upper = j;
@@ -104,16 +101,16 @@ void triangulate(Point newPoint) {
       hull.vertices.remove(i);
     }
   }
-
+  
   // Here are all the new edges
   for (int i = 0; i < newEdges.size(); i++) {
     Edge e = newEdges.get(i);
     edges.add(e);
   }
 
-  // This sorts them by their angle relative to a
-  // Probably could be improved?
+  // Sort them from top to bottom to make triangles
   Collections.sort(newEdges);
+
 
   // Make any new triangles
   for (int i = 0; i < newEdges.size()-1; i++) {
@@ -123,18 +120,11 @@ void triangulate(Point newPoint) {
     // This is a HUGE FLAW here and should be fixed
     // I shouldn't need to search through the entire edge list to find the right object reference
     Edge bc = new Edge(ab.b, ac.b);
-    boolean found = false;
     for (Edge e : edges) {
       if (e.equals(bc)) {
         bc = e; 
-        found = true;
         break;
       }
-    }
-
-    // Debugging
-    if (!found) {
-      println("problem");
     }
 
     // But once I have it, make a new triangle
@@ -142,14 +132,15 @@ void triangulate(Point newPoint) {
     ab.setTriangle(newT);
     ac.setTriangle(newT);
     bc.setTriangle(newT);
-
+    
     // And add it to list
     triangles.add(newT);
   }
 
   // And we've got a new point now
   hull.addVertex(newPoint);
-
+  
   // Resort everything
   hull.sortVertices();
+
 }
