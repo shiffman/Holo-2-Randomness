@@ -71,7 +71,7 @@ void triangulate(Point newPoint) {
     float dot2 = v2.x*-toTarget2.y + v2.y*toTarget2.x;//v2.dot(toTarget2);
     
     // Make a new edge from new point to two bi tangents
-    if ((dot1 > 0 && dot2 < 0) || (dot1 < 0 && dot2 > 0)) {
+    if ((dot1 >= 0 && dot2 <= 0) || (dot1 <= 0 && dot2 >= 0) || (dot1 == 0 && dot2 == 0)) {
       newEdges.add(new Edge(newPoint, current));
       if (upper == -1) {
         upper = j;

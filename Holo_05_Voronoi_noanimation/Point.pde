@@ -9,13 +9,18 @@
 // A PVector with some added functionality
 
 class Point extends PVector implements Comparable<Point> {
-
+  boolean toDelete = false;
+  
   Point() {
     super();
   }
 
   Point(float x, float y) {
     super(x, y);
+  }
+  
+  void markDelete() {
+    toDelete = true; 
   }
 
   void display(int wght, float r, float g, float b) {

@@ -107,14 +107,9 @@ class Edge implements Comparable<Edge> {
     if (t1.circleContains(outsideT1)) {
       legal = false;
     }
-    
-    
-    // Double check
-    if (legal) {
-      Point outsideT2 = this.notIncluded(t1);
-      if (t2.circleContains(outsideT2)) {
-        legal = false;
-      }
+    Point outsideT2 = this.notIncluded(t1);
+    if (t2.circleContains(outsideT2)) {
+      legal = false;
     }
     return !legal;
   }
@@ -126,7 +121,10 @@ class Edge implements Comparable<Edge> {
     Point outsideT2 = this.notIncluded(t1);
     float d1 = PVector.dist(t1.circum.center, outsideT1);
     float d2 = PVector.dist(t2.circum.center, outsideT2);
-    return (d1-t1.circum.r) + (d2-t2.circum.r);
+    float score1 = d1-t1.circum.r;
+    float score2 = d2-t2.circum.r;
+    println(score1, score2);
+    return min((d1-t1.circum.r), (d2-t2.circum.r));
   }
 
 
@@ -194,11 +192,11 @@ class Edge implements Comparable<Edge> {
     newE2b.swap(t2, newT2);
 
 
-    // edges.add(newE3);
-    // Save the new edge to be added later, not now
-    // Add the new triangles
-    triangles.add(newT1);
-    triangles.add(newT2);
+    //// edges.add(newE3);
+    //// Save the new edge to be added later, not now
+    //// Add the new triangles
+    //triangles.add(newT1);
+    //triangles.add(newT2);
     return newE3;
   }
 
@@ -279,36 +277,4 @@ class Edge implements Comparable<Edge> {
       return null;
     }
   }
-}
-
-
-// This is a mess, why am I doing this?
-// Better references of 
-Edge findEdge(Triangle t1, Triangle t2, Point a, Point b) {
-  Edge e = t1.ab;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }
-  e = t1.bc;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }  
-  e = t1.ac;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }  
-  e = t2.ab;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }
-  e = t2.bc;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }  
-  e = t2.ac;
-  if (e.a == a && e.b == b || e.a == b && e.b == a) {
-    return e;
-  }
-  println("No edge found");
-  return null;
 }

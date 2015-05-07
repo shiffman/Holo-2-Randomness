@@ -17,8 +17,8 @@ ArrayList<Edge> voronoi = new ArrayList<Edge>();
 
 boolean debug = true;
 
-boolean showEdges = true;
-boolean showDelaunay = true;
+boolean showEdges = false;
+boolean showDelaunay = false;
 boolean showVoronoi = true;
 boolean showPoints = true;
 
@@ -44,20 +44,35 @@ void setup() {
   newPoint(1, height-1);
   newPoint(width-2, height-1);
 
-  // Some random points
-  for (int i = 0; i < 50; i++) {
-   newPoint(random(width), random(height));
+  // A bunch of random points
+  for (int i = 0; i < 1000; i++) {
+    newPoint(random(width), random(height));
   }
 
-  // A bunch of random points
-  //float r = 10;
-  //float angle = 0;
-  //for (int i = 0; i < 50; i++) {
-  //  float x = r * cos(angle);
-  //  float y = r * sin(angle);
-  //  newPoint(width/2+x, height/2+y);
-  //  r += 10;
-  //  angle += 0.25;
+  // This is my hack b/c I don't want points super close to each
+  // other, I think the floating point math is failing on tiny tiny triangles?
+  for (int i = points.size()-1; i >= 0; i--) {    
+    for (int j = 0; j < i; j++) {
+      Point pi = points.get(i);
+      Point pj = points.get(j);
+      float d = PVector.dist(pi, pj);
+      if (d < 10) {
+        points.remove(i);
+      }
+    }
+  }
+
+  //float offset = 0;
+  //float xoff = 0;
+  //for (float r = 100; r < 101; r+=20) {
+  //  for (float angle = 0; angle < 360; angle += 10) {
+  //    float a = radians(angle + offset);
+  //    float x = r * cos(a);
+  //    float y = r * sin(a);
+  //    newPoint(width/2+x, height/2+y);
+  //  }    
+  //  offset += map(xoff,0,1,0,360);
+  //  xoff += 0.1;
   //}
 
   // Finish the file
@@ -80,8 +95,23 @@ void setup() {
       if (e.illegal()) {
         // It's not, flip it!
         Edge newEdge = e.flip();
-        // Delete extra edges and triangles
-        cleanUp(newEdge);
+        // This is bad, I'm doing an extra check b/c
+        // some edges are showing illegal with both flips
+        // Probably floating point math problem for tiny or perfectly symmetrical triangles?
+        if (!newEdge.illegal()) {
+          // Delete extra edges and triangles
+          cleanUp(newEdge);
+        } else {
+          // This edge is a problem see which one I should pick if I can?
+          float newScore = newEdge.howBad();
+          float oldScore = e.howBad();
+          if (oldScore < newScore) {
+            cleanUp(newEdge);
+          } else {
+            // Oh well, leave it alone for now
+            e.failed();
+          }
+        }        
         // We're not done, illegal edge!
         finishedFlipping = false;
       }
@@ -92,10 +122,9 @@ void setup() {
     Edge voronoiEdge = e.getVoronoi();
     if (voronoiEdge != null) {
       // Hack here probably need to deal with those infinity points?
-      //if (validate(voronoiEdge)) {
+      if (validate(voronoiEdge)) {
         voronoi.add(voronoiEdge);
-      //}
-      //vor.display(2, 255, 255, 255);
+      }
     }
   }
 }
@@ -103,7 +132,8 @@ void setup() {
 boolean validate(Edge e) {
   float d1 = dist(e.a.x, e.a.y, width/2, height/2);
   float d2 = dist(e.b.x, e.b.y, width/2, height/2);
-  if (d1 > 1000 || d2 > 1000) {
+  float threshold = 5000;
+  if (d1 > threshold || d2 > threshold) {
     return false;
   } else {
     return true;
