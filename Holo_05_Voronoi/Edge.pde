@@ -34,6 +34,9 @@ class Edge implements Comparable<Edge> {
   // Which point from a triangle is not part of this edge
   // There's got to be a better way to do this?
   Point notIncluded(Triangle t) {
+    if (t == null) {
+     return null;
+    }
     if (t.a != a && t.a != b) {
       return t.a;
     } else if (t.b != a && t.b != b) {

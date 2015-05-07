@@ -29,7 +29,7 @@ Poly hull = null;
 int counter = 3;
 
 // Finished with edge flipping (i.e. every edge is legal)
-boolean flippingFinished = true;
+boolean finishedFlipping = true;
 
 // Start mode at 0
 int mode = 0;
@@ -38,7 +38,7 @@ int mode = 0;
 PrintWriter output; 
 
 void setup() {
-  size(1200, 800, P2D_2X);
+  size(1200, 800);
   randomSeed(11);
 
   //frameRate(5);
@@ -51,20 +51,24 @@ void setup() {
   newPoint(1, height-1);
   newPoint(width-2, height-1);
 
-  // Some random points
-  //for (int i = 0; i < 50; i++) {
-  //  newPoint(random(width),random(height)); 
-  //}
-
-  float r = 10;
-  float angle = 0;
-  for (int i = 0; i < 50; i++) {
-    float x = r * cos(angle);
-    float y = r * sin(angle);
-    newPoint(width/2+x, height/2+y);
-    r += 10;
-    angle += 0.25;
+  // A bunch of random points
+  for (int i = 0; i < 1000; i++) {
+    newPoint(random(width), random(height));
   }
+
+  // This is my hack b/c I don't want points super close to each
+  // other, I think the floating point math is failing on tiny tiny triangles?
+  for (int i = points.size()-1; i >= 0; i--) {    
+    for (int j = 0; j < i; j++) {
+      Point pi = points.get(i);
+      Point pj = points.get(j);
+      float d = PVector.dist(pi, pj);
+      if (d < 10) {
+        points.remove(i);
+      }
+    }
+  }
+
 
   // Finish the file
   output.flush();  // Writes the remaining data to the file
@@ -126,34 +130,48 @@ void draw() {
     if (currentE.illegal()) {
       // It's not, flip it!
       Edge newEdge = currentE.flip();
-      // Delete extra edges and triangles
-      cleanUp(newEdge);
+      // This is bad, I'm doing an extra check b/c
+      // some edges are showing illegal with both flips
+      // Probably floating point math problem for tiny or perfectly symmetrical triangles?
+      if (!newEdge.illegal()) {
+        // Delete extra edges and triangles
+        cleanUp(newEdge);
+      } else {
+        // This edge is a problem see which one I should pick if I can?
+        float newScore = newEdge.howBad();
+        float oldScore = currentE.howBad();
+        if (oldScore < newScore) {
+          cleanUp(newEdge);
+        } else {
+          // Oh well, leave it alone for now
+          currentE.failed();
+        }
+      }        
       // We're not done, illegal edge!
-      flippingFinished = false;
+      finishedFlipping = false;
       illegalState = 1;
-      // We will draw illegal triangles twice for animation purposes
     } else {
       if (illegalState == 1) {
         illegalState = 2;
       } else if (illegalState == 2) {
         illegalState = 0;
-      }       
+      }
       // Go to the next
       counter++;
     }
-
     currentE.displayState(illegalState);
+
 
     // Are we done
     if (counter == edges.size()) {
       // All the edges are legal!
-      if (flippingFinished) {
+      if (finishedFlipping) {
         // Go to next mode
         mode++;
       } else {
         // Go through all edges again
         counter = 0;
-        flippingFinished = true;
+        finishedFlipping = true;
       }
     }
   } else if (mode == 2) {
