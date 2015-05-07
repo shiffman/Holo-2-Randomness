@@ -19,9 +19,8 @@ boolean debug = true;
 
 boolean showEdges = true;
 boolean showDelaunay = true;
-boolean showVoronoi = false;
+boolean showVoronoi = true;
 boolean showPoints = true;
-
 
 // This is an object for a generic Polygon
 // Using to track convex hull at the moment
@@ -47,7 +46,7 @@ void setup() {
 
   // Some random points
   for (int i = 0; i < 50; i++) {
-    newPoint(random(width), random(height));
+   newPoint(random(width), random(height));
   }
 
   // A bunch of random points
@@ -57,7 +56,6 @@ void setup() {
   //  float x = r * cos(angle);
   //  float y = r * sin(angle);
   //  newPoint(width/2+x, height/2+y);
-
   //  r += 10;
   //  angle += 0.25;
   //}
@@ -94,9 +92,9 @@ void setup() {
     Edge voronoiEdge = e.getVoronoi();
     if (voronoiEdge != null) {
       // Hack here probably need to deal with those infinity points?
-      if (validate(voronoiEdge)) {
+      //if (validate(voronoiEdge)) {
         voronoi.add(voronoiEdge);
-      }
+      //}
       //vor.display(2, 255, 255, 255);
     }
   }
@@ -118,6 +116,8 @@ void newPoint(float x, float y) {
   points.add(new Point(x, y));
 }
 
+
+
 void draw() {
   background(51);
 
@@ -129,11 +129,15 @@ void draw() {
 
   // We're done, let's see all the triangles
   if (showDelaunay) {
-
     for (Triangle t : triangles) {
       t.display();
     }
   } 
+
+  if (!mousePressed) {
+    Point p = points.get(testCount);
+    p.display(16, 0, 255, 0);
+  }
 
   if (showPoints) {
     for (Point p : points) {

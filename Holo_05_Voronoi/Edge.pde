@@ -64,12 +64,16 @@ class Edge implements Comparable<Edge> {
       bb = 0;
     }
     t1.showCircle(4, rr, gg, bb);
-    t1.display(16, rr, gg, bb);
+    t1.display(4, rr, gg, bb);
     if (outsideT1 != null) {
       outsideT1.display(16, rr, gg, bb);
-      t2.display(16, rr, gg, bb);
+      t2.display(4, rr, gg, bb);
     }
     prevState = legal;
+
+    stroke(rr, gg, bb);
+    strokeWeight(8);
+    line(a.x, a.y, b.x, b.y);
   }
 
 
@@ -128,8 +132,7 @@ class Edge implements Comparable<Edge> {
 
   // Flip this edge!
   // This method is something of a disaster, help!
-  void flip() {
-
+  Edge flip() {
     // These three things will be deleted when all is said and done
     t1.markForRemoval();
     t2.markForRemoval();
@@ -164,23 +167,48 @@ class Edge implements Comparable<Edge> {
 
     // edges.add(newE3);
     // Save the new edge to be added later, not now
-    newEdge = newE3;
     // Add the new triangles
     triangles.add(newT1);
     triangles.add(newT2);
+    return newE3;
   }
 
 
   // This is just for sorting by b's y for making new triangles
+  //int compareTo(Edge other) {
+  //  float diff = other.b.y - this.b.y;
+  //  if (diff < 0) {
+  //    return -1;
+  //  } else if (diff > 0) {
+  //    return 1;
+  //  } else {
+  //    return 0;
+  //  }
+  //}
+
+
+
+  // This is just for sorting by b's y for making new triangles
   int compareTo(Edge other) {
-    float diff = other.b.y - this.b.y;
-    if (diff < 0) {
-      return -1;
-    } else if (diff > 0) {
-      return 1;
-    } else {
-      return 0;
-    }
+   PVector v1 = PVector.sub(this.b, this.a);
+   PVector v2 = PVector.sub(other.b, other.a);
+
+   float a1 = v1.heading();
+   float a2 = v2.heading();
+   if (a1 < 0) {
+     a1 = map(a1, -PI, 0, PI, TWO_PI);
+   }
+   if (a2 < 0) {
+     a2 = map(a2, -PI, 0, PI, TWO_PI);
+   }
+   float diff = a1 - a2;
+   if (diff < 0) {
+     return -1;
+   } else if (diff > 0) {
+     return 1;
+   } else {
+     return 0;
+   }
   }
 
 

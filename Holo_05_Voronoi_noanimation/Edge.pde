@@ -70,6 +70,10 @@ class Edge implements Comparable<Edge> {
       t2.display(16, rr, gg, bb);
     }
     prevState = legal;
+
+    stroke(rr, gg, bb);
+    strokeWeight(8);
+    line(a.x, a.y, b.x, b.y);
   }
 
 
@@ -172,7 +176,18 @@ class Edge implements Comparable<Edge> {
 
   // This is just for sorting by b's y for making new triangles
   int compareTo(Edge other) {
-    float diff = other.b.y - this.b.y;
+    PVector v1 = PVector.sub(this.b, this.a);
+    PVector v2 = PVector.sub(other.b, other.a);
+
+    float a1 = v1.heading();
+    float a2 = v2.heading();
+    if (a1 < 0) {
+      a1 = map(a1, -PI, 0, PI, TWO_PI);
+    }
+    if (a2 < 0) {
+      a2 = map(a2, -PI, 0, PI, TWO_PI);
+    }
+    float diff = a1 - a2;
     if (diff < 0) {
       return -1;
     } else if (diff > 0) {
@@ -209,7 +224,7 @@ class Edge implements Comparable<Edge> {
 
   // Console printing
   String toString() {
-   return a.toString() + " : " + b.toString();
+    return a.toString() + " : " + b.toString();
   }
 
   Edge getVoronoi() {

@@ -50,12 +50,21 @@ void setup() {
   newPoint(width-1, 0);
   newPoint(1, height-1);
   newPoint(width-2, height-1);
-  
-  // Some random points
-  for (int i = 0; i < 50; i++) {
-    newPoint(random(width),random(height)); 
-  }
 
+  // Some random points
+  //for (int i = 0; i < 50; i++) {
+  //  newPoint(random(width),random(height)); 
+  //}
+
+  float r = 10;
+  float angle = 0;
+  for (int i = 0; i < 50; i++) {
+    float x = r * cos(angle);
+    float y = r * sin(angle);
+    newPoint(width/2+x, height/2+y);
+    r += 10;
+    angle += 0.25;
+  }
 
   // Finish the file
   output.flush();  // Writes the remaining data to the file
@@ -76,11 +85,6 @@ int illegalState = 0;
 
 void draw() {
   background(51);
-
-  if (illegalState > 0) {
-    //delay(250);
-  }
-
 
   // Starting off with Triangulation
   if (mode == 0) {
@@ -116,31 +120,27 @@ void draw() {
       // Show all edges
       e.display();
     }
-    //frameRate(10);
-
     // Current edge
     Edge currentE = edges.get(counter);
     // Is it legal?
     if (currentE.illegal()) {
       // It's not, flip it!
-      currentE.flip();
+      Edge newEdge = currentE.flip();
+      // Delete extra edges and triangles
+      cleanUp(newEdge);
       // We're not done, illegal edge!
       flippingFinished = false;
       illegalState = 1;
-      // Delete extra edges and triangles
-      cleanUp();
       // We will draw illegal triangles twice for animation purposes
     } else {
       if (illegalState == 1) {
         illegalState = 2;
       } else if (illegalState == 2) {
         illegalState = 0;
-      } 
+      }       
       // Go to the next
       counter++;
     }
-
-    // Draw one triangle's circle
 
     currentE.displayState(illegalState);
 
@@ -183,12 +183,9 @@ void draw() {
 }
 
 
-// Global variable to track new edge added during edge flipping
-// This could probably be improved
-Edge newEdge;
 
 // Remove and delete any invalid triangles and edges after flipping
-void cleanUp() {
+void cleanUp(Edge newEdge) {
   for (int i = triangles.size()-1; i >=0; i--) {
     Triangle t = triangles.get(i);
     if (t.toRemove) {
