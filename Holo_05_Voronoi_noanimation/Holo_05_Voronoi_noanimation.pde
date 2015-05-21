@@ -36,7 +36,7 @@ void setup() {
 
   //frameRate(5);
   // Write the file
-  output = createWriter("positions.txt"); 
+
 
   // Four points at corners
   newPoint(0, 0);
@@ -44,37 +44,31 @@ void setup() {
   newPoint(1, height-1);
   newPoint(width-2, height-1);
 
-  // A bunch of random points
-  for (int i = 0; i < 1000; i++) {
-    newPoint(random(width), random(height));
-  }
+ for (int i = 0; i < 1000; i++) {
+   newPoint(random(width),random(height)); 
+ }
+
 
   // This is my hack b/c I don't want points super close to each
   // other, I think the floating point math is failing on tiny tiny triangles?
-  for (int i = points.size()-1; i >= 0; i--) {    
-    for (int j = 0; j < i; j++) {
-      Point pi = points.get(i);
+  println(points.size());
+  for (int i = points.size()-1; i >= 1; i--) {    
+    Point pi = points.get(i);
+    for (int j = i-1; j >= 0; j--) {
       Point pj = points.get(j);
       float d = PVector.dist(pi, pj);
-      if (d < 10) {
+      if (d < 15) {
         points.remove(i);
+        break;
       }
     }
   }
+  println(points.size());
 
-  //float offset = 0;
-  //float xoff = 0;
-  //for (float r = 100; r < 101; r+=20) {
-  //  for (float angle = 0; angle < 360; angle += 10) {
-  //    float a = radians(angle + offset);
-  //    float x = r * cos(a);
-  //    float y = r * sin(a);
-  //    newPoint(width/2+x, height/2+y);
-  //  }    
-  //  offset += map(xoff,0,1,0,360);
-  //  xoff += 0.1;
-  //}
-
+  output = createWriter("positions.txt"); 
+  for (Point p : points) {
+    output.println(p.x + "," + p.y);  // Write the coordinate to the file
+  }
   // Finish the file
   output.flush();  // Writes the remaining data to the file
   output.close();  // Finishes the file
@@ -106,9 +100,13 @@ void setup() {
           float newScore = newEdge.howBad();
           float oldScore = e.howBad();
           if (oldScore < newScore) {
+            println("Second try for this edge", i);
             cleanUp(newEdge);
           } else {
             // Oh well, leave it alone for now
+            //println(e);
+            //cleanUp(newEdge);
+            println("Done with this edge, fail", i);
             e.failed();
           }
         }        
@@ -119,6 +117,9 @@ void setup() {
   }
 
   for (Edge e : edges) {
+    if (e.failed) {
+      println("Failed edge");
+    }
     Edge voronoiEdge = e.getVoronoi();
     if (voronoiEdge != null) {
       // Hack here probably need to deal with those infinity points?
@@ -130,6 +131,7 @@ void setup() {
 }
 
 boolean validate(Edge e) {
+
   float d1 = dist(e.a.x, e.a.y, width/2, height/2);
   float d2 = dist(e.b.x, e.b.y, width/2, height/2);
   float threshold = 5000;
@@ -142,7 +144,6 @@ boolean validate(Edge e) {
 
 // Adding a new point
 void newPoint(float x, float y) {
-  output.println(x + "," + y);  // Write the coordinate to the file
   points.add(new Point(x, y));
 }
 

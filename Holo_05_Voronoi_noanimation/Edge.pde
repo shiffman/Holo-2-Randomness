@@ -45,11 +45,11 @@ class Edge implements Comparable<Edge> {
   }
 
   void failed() {
-    timesFailed++;
-    if (timesFailed > 100) {
+    //timesFailed++;
+    //if (timesFailed > 100) {
       println("This edge is a problem and both flips are illegal");
       failed = true;
-    }
+    //}
   }
 
 
