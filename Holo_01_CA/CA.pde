@@ -75,30 +75,33 @@ class CA {
   }
   // Implementing the Wolfram rules
   // This is the concise conversion to binary way
-  /*int rules (int a, int b, int c) {
-   String s = "" + a + b + c;
-   int index = Integer.parseInt(s, 2);
-   return ruleset[index];
-   }*/
-  // For JavaScript Mode
   int rules (int a, int b, int c) {
-    if (a == 1 && b == 1 && c == 1) return ruleset[7];
-    if (a == 1 && b == 1 && c == 0) return ruleset[6];
-    if (a == 1 && b == 0 && c == 1) return ruleset[5];
-    if (a == 1 && b == 0 && c == 0) return ruleset[4];
-    if (a == 0 && b == 1 && c == 1) return ruleset[3];
-    if (a == 0 && b == 1 && c == 0) return ruleset[2];
-    if (a == 0 && b == 0 && c == 1) return ruleset[1];
-    if (a == 0 && b == 0 && c == 0) return ruleset[0];
-    return 0;
+    String s = "" + a + b + c;
+    int index = Integer.parseInt(s, 2);
+
+    return ruleset[7-index];
   }
+  // For JavaScript Mode
+  // Implementing the Wolfram rules
+  // Could be improved and made more concise, but here we can explicitly see what is going on for each case
+  /*int rules (int a, int b, int c) {
+   if (a == 1 && b == 1 && c == 1) { return ruleset[0]; }
+   if (a == 1 && b == 1 && c == 0) { return ruleset[1]; }
+   if (a == 1 && b == 0 && c == 1) { return ruleset[2]; }
+   if (a == 1 && b == 0 && c == 0) { return ruleset[3]; }
+   if (a == 0 && b == 1 && c == 1) { return ruleset[4]; }
+   if (a == 0 && b == 1 && c == 0) { return ruleset[5]; }
+   if (a == 0 && b == 0 && c == 1) { return ruleset[6]; }
+   if (a == 0 && b == 0 && c == 0) { return ruleset[7]; }
+   return 0;
+   }*/
+
 
   // The CA is done if it reaches the bottom of the screen
   boolean finished() {
     if (generation > height/w) {
       return true;
-    } 
-    else {
+    } else {
       return false;
     }
   }
