@@ -23,19 +23,21 @@ double h;// = 2;
 // A different range will allow us to "zoom" in or out on the fractal
 // double xmin = -1.5; double ymin = -.1; double wh = 0.15;
 
+void settings() {
+  size(2598, 3425);
+}
+
 void setup() {
   //size(863,863/2);
-  size(2598, 3425);
-  
+
   h = (float(height)/width)*w;
   ymin = (float(height)/width)*xmin/2;
-
 }
 
 void draw() {
 
   loadPixels();
-  
+
   // Maximum number of iterations for each point on the complex plane
   int maxiterations = 200;
 
@@ -43,18 +45,18 @@ void draw() {
   double xmax = xmin + w;
   // y goes from ymin to ymax
   double ymax = ymin + h;
-  
+
   // Calculate amount we increment x,y for each pixel
   double dx = (xmax - xmin) / (width);
   double dy = (ymax - ymin) / (height);
 
   // Start y
   double y = ymin;
-  for(int j = 0; j < height; j++) {
+  for (int j = 0; j < height; j++) {
     // Start x
     double x = xmin;
-    for(int i = 0;  i < width; i++) {
-      
+    for (int i = 0; i < width; i++) {
+
       // Now we test, as we iterate z = z^2 + cm does z tend towards infinity?
       double a = x;
       double b = y;
@@ -66,27 +68,27 @@ void draw() {
         a = aa - bb + x;
         b = twoab + y;
         // Infinty in our finite world is simple, let's just consider it 16
-        if(aa + bb > 16.0f) {
+        if (aa + bb > 16.0f) {
           break;  // Bail
         }
         n++;
       }
-      
+
       // We color each pixel based on how long it takes to get to infinity
       // If we never got there, let's pick the color black
-      //if (n == maxiterations) {
-        //pixels[i+j*width] = color(255);
-      //} else {
-        pixels[i+j*width] = color(map(n,0,maxiterations,255,0));
-      //}
+      if (n > 15) {
+        pixels[i+j*width] = color(0);
+      } else {
+        pixels[i+j*width] = color(255);
+        //pixels[i+j*width] = color(map(n,0,maxiterations,255,0));
+      }
       //else pixels[i+j*width] = color(n*16 % 255);  // Gosh, we could make fancy colors here if we wanted
       x += dx;
     }
     y += dy;
   }
   updatePixels();
-  
+
   save("holo_mandel.png");
   noLoop();
 }
-
